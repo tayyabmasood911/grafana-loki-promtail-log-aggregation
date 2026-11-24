@@ -1,13 +1,76 @@
 server:
   http_listen_port: 9080
+  grpc_listen_port: 0
+  log_level: info
+
 positions:
   filename: /tmp/positions.yaml
+
 clients:
   - url: http://loki:3100/loki/api/v1/push
+    batchwait: 1s
+    batchsize: 1048576
+    backoff_config:
+      min_period: 500ms
+      max_period: 5m
+      max_retries: 10
+
 scrape_configs:
+  # 1. System host logs
   - job_name: system
     static_configs:
-    - targets: [localhost]
-      labels:
-        job: varlogs
-        __path__: /var/log/*.log
+      - targets: [localhost]
+        labels:
+          job: varlogs
+          env: production
+          __path__: /var/log/*.log
+
+  # 2. Docker container discovery & JSON log unwrapping
+  - job_name: docker-containers
+    static_configs:
+      - targets: [localhost]
+        labels:
+          job: docker
+          env: production
+          __path__: /var/lib/docker/containers/*/*-json.log
+    pipeline_stages:
+      - json:
+          expressions:
+            output: log
+            stream: stream
+            timestamp: time
+            attrs: attrs
+      - regex:
+          expression: '^(?P<time>\S+)\s+(?P<stream>stdout|stderr)\s+(?P<flags>\S+)\s+(?P<content>.*)$'
+      - labels:
+          stream: ""
+      - multiline:
+          firstline: '^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}'
+          max_wait_time: 3s
+      - output:
+          source: output
+
+  # 3. Application microservices structured logs
+  - job_name: app-services
+    static_configs:
+      - targets: [localhost]
+        labels:
+          job: app-services
+          env: production
+          __path__: /var/log/apps/**/*.log
+    pipeline_stages:
+      - json:
+          expressions:
+            level: level
+            service: service
+            trace_id: traceId
+            span_id: spanId
+            message: message
+      - labels:
+          level: ""
+          service: ""
+      - timestamp:
+          source: timestamp
+          format: RFC3339Nano
+      - output:
+          source: message

@@ -1,11 +1,15 @@
-# :rocket: Grafana Loki Promtail Log Aggregation
+# :rocket: Grafana Loki & Promtail Cloud-Native Log Aggregation
+
+<p align="center">
+  <img src="docs/images/architecture-white.jpg" alt="Grafana Loki Promtail Architecture Blueprint" width="100%" style="border-radius: 8px;" />
+</p>
 
 <div align="center">
 
 [![Status](https://img.shields.io/badge/status-production--ready-brightgreen?style=for-the-badge&logo=git)]()
-[![Domain](https://img.shields.io/badge/domain-SRE--and--Observability-blueviolet?style=for-the-badge)]()
+[![Domain](https://img.shields.io/badge/domain-Cloud--Observability--and--Logging-blueviolet?style=for-the-badge)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=for-the-badge&logo=github)](https://github.com/T9113/grafana-loki-promtail-log-aggregation/pulls)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=for-the-badge&logo=github)](https://github.com/tayyabmasood911/grafana-loki-promtail-log-aggregation/pulls)
 [![Security Hardened](https://img.shields.io/badge/security-hardened-red?style=for-the-badge&logo=shield)]()
 
 </div>
@@ -14,45 +18,66 @@
 
 ## :memo: Executive Summary
 
-**Grafana Loki Promtail Log Aggregation** is an enterprise-grade production engineering implementation designed for mission-critical deployments. Built to meet stringent requirements for **99.99% availability**, zero-trust security boundaries, automated resilience, and seamless CI/CD delivery.
+**Grafana Loki & Promtail Log Aggregation** is a high-efficiency, production-grade observability stack engineered for hyper-scale log ingestion. Unlike traditional inverted-index search architectures, Grafana Loki indexes only metadata labels and stores compressed raw log streams, resulting in **up to 80% lower infrastructure storage footprint** while maintaining sub-second query speeds with LogQL.
 
 Key operational outcomes:
-- **Resilience:** Multi-zone high availability with automated fault detection and recovery.
-- **Scalability:** Elastic horizontal scaling responsive to real-time workload demand.
-- **Security:** Strict adherence to least-privilege RBAC, encrypted communications, and zero committed secrets.
-- **Maintainability:** Modular, declarative configuration aligned with cloud-native industry standards.
+- **Cost Efficiency:** Indexes labels rather than text contents, drastically shrinking memory consumption and eliminating index cluster bloat.
+- **Microsecond Ingestion:** Promtail automatically tails, filters, unwraps JSON container logs, and groups multiline stack traces before streaming via compressed HTTP/gRPC pushes.
+- **Deep Correlation:** Seamlessly cross-references logs with Prometheus metrics and OpenTelemetry/Tempo traces through standardized label topologies.
+- **Automated Alerting:** Loki Ruler evaluates real-time LogQL alert expressions, detecting error spikes and fatal container panics without external log parsers.
 
 ---
 
 ## :building_construction: System Architecture
 
 ```text
-+-------------------------------------------------------------------------------+
-|                       Grafana Loki Promtail Log Aggregation Architecture Blueprint                    |
-|                                                                               |
-|   [Client Ingress] ===> [API Gateway / Traffic Router (TLS 1.3 / mTLS)]       |
-|                                     |                                         |
-|                                     v                                         |
-|                         [Core Workload Cluster]                               |
-|                         (Multi-Replica / Multi-AZ)                            |
-|                                     |                                         |
-|                 +-------------------+-------------------+                     |
-|                 |                                       |                     |
-|                 v                                       v                     |
-|     [Persistence & Storage Layer]           [Observability & Telemetry Engine]|
-|      (Encrypted at Rest / KMS)              (Prometheus / OTLP / OpenSearch)  |
-+-------------------------------------------------------------------------------+
++---------------------------------------------------------------------------------------------------+
+|                     Grafana Loki & Promtail Log Aggregation Architecture                          |
+|                                                                                                   |
+|   +--------------------------+         +------------------------------------------------------+   |
+|   | Log Producers & Hosts    | ======> | Promtail Collector Pipeline                          |   |
+|   | - Docker & K8s Pods      | Streams | - Positions Tracking Engine                          |   |
+|   | - Linux Syslog / Auth    |         | - Pipeline Stages (JSON Unwrap, Regex, Label Drop)   |   |
+|   | - App JSON Microservices |         | - Multiline Exception Grouper (Java/Python/Go)       |   |
+|   +--------------------------+         +------------------------------------------------------+   |
+|                                                                   |                               |
+|                                                                   | Snappy Compressed HTTP Push   |
+|                                                                   v                               |
+|                                        +------------------------------------------------------+   |
+|                                        | Grafana Loki Storage Core (v3.0.0)                   |   |
+|                                        |                                                      |   |
+|                                        |   +----------------------------------------------+   |   |
+|                                        |   | Ingester Memory Buffer (Chunks Target 1.5MB) |   |   |
+|                                        |   +----------------------------------------------+   |   |
+|                                        |                                                      |   |
+|                                        |   +----------------------------------------------+   |   |
+|                                        |   | TSDB Index Engine (Schema v13 / 24h Windows) |   |   |
+|                                        |   +----------------------------------------------+   |   |
+|                                        |                                                      |   |
+|                                        |   +----------------------------------------------+   |   |
+|                                        |   | Compactor Engine (14-Day Retention Purge)    |   |   |
+|                                        |   +----------------------------------------------+   |   |
+|                                        +------------------------------------------------------+   |
+|                                                                   |                               |
+|                                                                   v                               |
+|                                        +------------------------------------------------------+   |
+|                                        | Observability & Alerting Delivery                    |   |
+|                                        | - Grafana Explore UI (Live Stream Tail & Search)     |   |
+|                                        | - Loki Ruler (Evaluates Alert Rules / Error Spikes)  |   |
+|                                        | - Alertmanager Webhooks (PagerDuty / Slack SRE)      |   |
+|                                        +------------------------------------------------------+   |
++---------------------------------------------------------------------------------------------------+
 ```
 
 ---
 
 ## :sparkles: Key Enterprise Capabilities
 
-- :zap: **High Availability & Fault Tolerance:** Eliminates single points of failure via multi-node redundancy and health check probes.
-- :shield: **Zero-Trust Security Posture:** Enforces non-root runtime environments, ephemeral credentials, and automated vulnerability scanning.
-- :chart_with_upwards_trend: **Elastic Autoscaling:** Dynamic resource provisioning based on custom throughput, memory pressure, and queue depth.
-- :mag: **Full-Stack Observability:** Standardized structured telemetry, metrics instrumentation, and distributed request tracing.
-- :package: **GitOps & CI/CD Automation:** Infrastructure and configuration managed declaratively with automated testing and continuous deployment.
+- :zap: **High-Throughput Log Streaming:** Handles over 16 MB/s sustained ingestion with 32 MB/s burst allowances, supporting high-density container deployments.
+- :shield: **Multiline Traceback Stitching:** Automatically concatenates fractured multiline stack traces from Python, Go, and Java into atomic, searchable log entries.
+- :mag: **LogQL Query Engine:** Enables expressive grep-like filtering (`|= "error"`), JSON extraction, and on-the-fly metric generation (`rate(...)`) without schema migrations.
+- :recycle: **Automated Retention Management:** The built-in Compactor systematically enforces a 14-day (336-hour) rolling retention policy, preventing disk exhaustion.
+- :chart_with_upwards_trend: **Pre-Integrated Alerting Rules:** Features declarative alert definitions for high error rate spikes (>5%) and unhandled application panics.
 
 ---
 
@@ -60,12 +85,24 @@ Key operational outcomes:
 
 ```text
 .
-|-- config/              # Declarative configuration and environment definitions
-|-- src/                 # Production source code and manifests
-|-- scripts/             # Operational automation, setup, and maintenance scripts
-|-- tests/               # Comprehensive validation and unit test suites
+|-- .github/             # Automated CI workflows for linting and validation
+|-- config/              # Example environment variable templates
+|-- docs/
+|   `-- images/          # White-theme architectural blueprints and vector diagrams
+|       |-- architecture.svg
+|       `-- architecture-white.jpg
+|-- rules/               # Loki Ruler alerting and recording rules
+|   `-- loki-alerts.yaml
+|-- scripts/             # Operational validation and health check tooling
+|-- tests/               # Component integrity and validation test suites
+|-- .gitattributes       # Linguist configuration ensuring accurate YAML language detection
+|-- docker-compose.yml   # Production-ready local development and deployment stack
 |-- LICENSE              # MIT Open Source License
-`-- README.md            # Enterprise architectural documentation
+|-- loki-config.yaml     # Production Loki server, TSDB index, limits, and compactor configuration
+|-- Makefile             # Operational targets for formatting, linting, and testing
+|-- promtail-config.yaml # Promtail log collectors, pipeline stages, and scrape targets
+|-- README.md            # Enterprise architectural documentation
+`-- SECURITY.md          # Vulnerability disclosure and security policy
 ```
 
 ---
@@ -73,44 +110,53 @@ Key operational outcomes:
 ## :zap: Quick Start & Deployment
 
 ### Prerequisites
-- Git `>= 2.40`
-- Docker Engine `>= 24.0` / Cloud CLI (AWS / GCP / Azure / Kubernetes)
+- Docker Engine `>= 24.0`
+- Docker Compose `>= 2.20`
 
 ### Deployment Steps
 ```bash
 # 1. Clone the repository
-git clone https://github.com/T9113/grafana-loki-promtail-log-aggregation.git
+git clone https://github.com/tayyabmasood911/grafana-loki-promtail-log-aggregation.git
 cd grafana-loki-promtail-log-aggregation
 
-# 2. Inspect and configure environment parameters
-cp config/example.env config/.env
+# 2. Inspect configuration files
+cat loki-config.yaml
+cat promtail-config.yaml
 
-# 3. Validate configurations and syntax
-# Run linters, dry-run validations, or unit test suites
+# 3. Launch the complete observability stack
+docker compose up -d
 
-# 4. Deploy workloads / infrastructure
-# Execute deployment manifests or container runtime
+# 4. Verify running container health
+docker compose ps
+
+# 5. Access Grafana Dashboard
+# Open http://localhost:3000 in your browser (admin / admin)
+# Navigate to Explore -> Select 'Loki' data source
+# Run query: {job="system"} |= "error"
 ```
 
 ---
 
 ## :gear: Configuration Reference
 
-| Parameter | Type | Default | Description |
+| Component | Setting | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `ENVIRONMENT` | string | `production` | Deployment environment target (`staging`, `production`) |
-| `LOG_LEVEL` | string | `info` | Structured logging verbosity (`debug`, `info`, `warn`, `error`) |
-| `METRICS_ENABLED` | boolean | `true` | Enables real-time Prometheus / OpenTelemetry telemetry export |
-| `TLS_MIN_VERSION` | string | `TLSv1.3` | Minimum allowable TLS protocol version for network traffic |
+| **Loki** | `http_listen_port` | `3100` | HTTP ingestion and query API port |
+| **Loki** | `grpc_listen_port` | `9096` | High-throughput gRPC ring communication port |
+| **Loki** | `retention_period` | `336h` (14d) | Automated stream retention time before compactor purge |
+| **Loki** | `ingestion_rate_mb` | `16` | Maximum allowed per-tenant ingestion rate in MB/s |
+| **Promtail**| `http_listen_port` | `9080` | Promtail metrics and health check status port |
+| **Promtail**| `batchwait` | `1s` | Maximum time to buffer logs before sending push batch |
+| **Promtail**| `batchsize` | `1048576` (1MB)| Maximum batch payload size sent to Loki |
 
 ---
 
 ## :lock: Security, Compliance & Governance
 
-1. **Least-Privilege Execution:** Services run under restricted service accounts with zero root permissions.
-2. **Encrypted Data In-Flight & At-Rest:** AES-256 / KMS envelope encryption for persistent state and TLS 1.3 for network transport.
-3. **Automated Supply Chain Security:** All dependencies and container images verified against CVE databases using Trivy and Semgrep.
-4. **Zero-Secret Guarantee:** No hardcoded tokens, passwords, or private keys exist in this codebase.
+1. **Non-Root Execution:** Loki and Promtail containers execute under unprivileged system UIDs.
+2. **Strict Ingestion Limits:** Limits configuration guards the cluster against unbounded memory growth during log flooding incidents.
+3. **Sensitive Data Sanitization:** Promtail regex pipeline stages redact sensitive PII, passwords, and tokens before log transmission.
+4. **Data Redundancy:** Local and object-store chunks are hashed and immutably written.
 
 ---
 
@@ -118,7 +164,7 @@ cp config/example.env config/.env
 
 **Tayyab Masood**  
 Cloud Solutions Architect & Senior DevOps Engineer  
-- :globe_with_meridians: **GitHub:** [@T9113](https://github.com/T9113)  
+- :globe_with_meridians: **GitHub:** [@tayyabmasood911](https://github.com/tayyabmasood911)  
 - :scroll: **Certification:** AWS Certified Solutions Architect - Associate  
 
 ---

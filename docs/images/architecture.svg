@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" width="100%" height="100%" style="background:#ffffff; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <filter id="softShadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#0f172a" flood-opacity="0.06"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="640" fill="#ffffff"/>
+
+  <!-- Top Title Bar -->
+  <rect x="40" y="24" width="1120" height="60" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5" filter="url(#softShadow)"/>
+  <text x="70" y="60" fill="#0f172a" font-size="20" font-weight="700" letter-spacing="0.3">Grafana Loki &amp; Promtail Cloud-Native Log Aggregation Pipeline</text>
+  <rect x="910" y="40" width="110" height="26" rx="13" fill="#ecfdf5" stroke="#10b981" stroke-width="1"/>
+  <text x="925" y="58" fill="#047857" font-size="12" font-weight="600">PRODUCTION</text>
+  <rect x="1030" y="40" width="100" height="26" rx="13" fill="#eff6ff" stroke="#3b82f6" stroke-width="1"/>
+  <text x="1045" y="58" fill="#1d4ed8" font-size="12" font-weight="600">LOG AGGREGATION</text>
+
+  <!-- COLUMN 1: Log Producers -->
+  <rect x="40" y="110" width="250" height="490" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" filter="url(#softShadow)"/>
+  <rect x="40" y="110" width="250" height="40" rx="8" fill="#f1f5f9"/>
+  <text x="60" y="136" fill="#0284c7" font-size="13" font-weight="700">1. LOG SOURCES</text>
+
+  <rect x="60" y="170" width="210" height="70" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="75" y="198" fill="#0f172a" font-size="14" font-weight="600">Docker &amp; K8s Pods</text>
+  <text x="75" y="222" fill="#64748b" font-size="11">JSON stdout / stderr Streams</text>
+
+  <rect x="60" y="260" width="210" height="70" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="75" y="288" fill="#0f172a" font-size="14" font-weight="600">Linux Host Syslog</text>
+  <text x="75" y="312" fill="#64748b" font-size="11">/var/log/syslog, auth.log</text>
+
+  <rect x="60" y="350" width="210" height="70" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="75" y="378" fill="#0f172a" font-size="14" font-weight="600">Microservice App Logs</text>
+  <text x="75" y="402" fill="#64748b" font-size="11">Structured JSON / Trace ID</text>
+
+  <rect x="60" y="440" width="210" height="70" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="75" y="468" fill="#0f172a" font-size="14" font-weight="600">Exception Stacktraces</text>
+  <text x="75" y="492" fill="#64748b" font-size="11">Java, Python &amp; Go Multi-line</text>
+
+  <!-- COLUMN 2: Promtail Collector & Pipeline -->
+  <rect x="330" y="110" width="250" height="490" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" filter="url(#softShadow)"/>
+  <rect x="330" y="110" width="250" height="40" rx="8" fill="#f1f5f9"/>
+  <text x="350" y="136" fill="#6366f1" font-size="13" font-weight="700">2. PROMTAIL PIPELINE</text>
+
+  <rect x="350" y="170" width="210" height="70" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="365" y="198" fill="#0f172a" font-size="14" font-weight="600">Target Discovery</text>
+  <text x="365" y="222" fill="#64748b" font-size="11">Positions Tracking &amp; Tail Engine</text>
+
+  <rect x="350" y="260" width="210" height="70" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="365" y="288" fill="#0f172a" font-size="14" font-weight="600">Pipeline Stages</text>
+  <text x="365" y="312" fill="#64748b" font-size="11">JSON Parsing, Regex &amp; Filters</text>
+
+  <rect x="350" y="350" width="210" height="70" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="365" y="378" fill="#0f172a" font-size="14" font-weight="600">Multiline Stage</text>
+  <text x="365" y="402" fill="#64748b" font-size="11">Collapses Multi-line Tracebacks</text>
+
+  <rect x="350" y="440" width="210" height="70" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="365" y="468" fill="#0f172a" font-size="14" font-weight="600">Push Client (Snappy)</text>
+  <text x="365" y="492" fill="#64748b" font-size="11">Compressed Batched HTTP Push</text>
+
+  <!-- COLUMN 3: Grafana Loki Core -->
+  <rect x="620" y="110" width="250" height="490" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" filter="url(#softShadow)"/>
+  <rect x="620" y="110" width="250" height="40" rx="8" fill="#f1f5f9"/>
+  <text x="640" y="136" fill="#d97706" font-size="13" font-weight="700">3. GRAFANA LOKI CORE</text>
+
+  <rect x="640" y="170" width="210" height="70" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="655" y="198" fill="#0f172a" font-size="14" font-weight="600">Ingester &amp; Chunk Memory</text>
+  <text x="655" y="222" fill="#64748b" font-size="11">Buffers &amp; Flushes Log Streams</text>
+
+  <rect x="640" y="260" width="210" height="70" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="655" y="288" fill="#0f172a" font-size="14" font-weight="600">TSDB Index Engine</text>
+  <text x="655" y="312" fill="#64748b" font-size="11">Schema v13 / 24h Partition Index</text>
+
+  <rect x="640" y="350" width="210" height="70" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="655" y="378" fill="#0f172a" font-size="14" font-weight="600">Loki Ruler Engine</text>
+  <text x="655" y="402" fill="#64748b" font-size="11">Evaluates LogQL Alert Rules</text>
+
+  <rect x="640" y="440" width="210" height="70" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="655" y="468" fill="#0f172a" font-size="14" font-weight="600">Compactor &amp; Retention</text>
+  <text x="655" y="492" fill="#64748b" font-size="11">Automated 14-Day Stream Purging</text>
+
+  <!-- COLUMN 4: Visualization & Dashboards -->
+  <rect x="910" y="110" width="250" height="490" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" filter="url(#softShadow)"/>
+  <rect x="910" y="110" width="250" height="40" rx="8" fill="#f1f5f9"/>
+  <text x="930" y="136" fill="#059669" font-size="13" font-weight="700">4. GRAFANA DASHBOARDS</text>
+
+  <rect x="930" y="170" width="210" height="70" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="945" y="198" fill="#0f172a" font-size="14" font-weight="600">LogQL Live Search</text>
+  <text x="945" y="222" fill="#64748b" font-size="11">{env="prod"} |= "error"</text>
+
+  <rect x="930" y="260" width="210" height="70" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="945" y="288" fill="#0f172a" font-size="14" font-weight="600">Metrics from Logs</text>
+  <text x="945" y="312" fill="#64748b" font-size="11">rate({job="app"} |= "500" [5m])</text>
+
+  <rect x="930" y="350" width="210" height="70" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="945" y="378" fill="#0f172a" font-size="14" font-weight="600">Trace-to-Log Correlation</text>
+  <text x="945" y="402" fill="#64748b" font-size="11">Tempo / Jaeger Span Jump</text>
+
+  <rect x="930" y="440" width="210" height="70" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="945" y="468" fill="#0f172a" font-size="14" font-weight="600">Alertmanager Escalation</text>
+  <text x="945" y="492" fill="#64748b" font-size="11">PagerDuty &amp; Slack SRE Webhooks</text>
+
+  <!-- Connectors -->
+  <path d="M 290 205 L 330 205" stroke="#94a3b8" stroke-width="2"/>
+  <path d="M 580 205 L 620 205" stroke="#94a3b8" stroke-width="2"/>
+  <path d="M 870 205 L 910 205" stroke="#94a3b8" stroke-width="2"/>
+
+  <path d="M 290 385 L 330 385" stroke="#94a3b8" stroke-width="2"/>
+  <path d="M 580 385 L 620 385" stroke="#94a3b8" stroke-width="2"/>
+  <path d="M 870 385 L 910 385" stroke="#94a3b8" stroke-width="2"/>
+</svg>
